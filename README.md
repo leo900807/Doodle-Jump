@@ -1,3 +1,7 @@
-# project3-example
+# 2020-pd2-DoodleJump
 
-Project3 Example
+## Video link
+## How to play
+## Requirements
+## Polymorphism
+## Bonus
