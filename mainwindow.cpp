@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     timer->start(5);
     connect(timer, SIGNAL(timeout()), this, SLOT(jump()));
     srand(time(NULL));
-    for(int i = 0; i < 5; i++)
+    for(int i = 0; i < 4; i++)
     {
         gen_plat(rand() % (1000 - 100), rand() % (830 / 5) + (830 / 5) * i);
         if(rand() % 20 < 3)
@@ -29,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
         if(rand() % 20 < 3)
             gen_plat(rand() % (1000 - 100), -(rand() % (1660 / 10) + (1660 / 10) * i));
     }
+    normal_platform *plat = new normal_platform(0, 830);
+    plat->setPixmap(QPixmap(":/res/normal_platform.png").scaled(1000, 100));
+    plats.insert(plat);
+    scene->addItem(static_cast<QGraphicsPixmapItem*>(plat));
 }
 
 MainWindow::~MainWindow()
@@ -41,7 +45,7 @@ void MainWindow::jump()
     QList<QGraphicsItem*> colli = player->collidingItems();
     if(v <= -12)
         over();
-    if(player->y() <= 430)
+    if(player->y() <= 400)
         roll(v);
     else
         player->setPos(player->x(), player->y() - v);
@@ -99,14 +103,6 @@ void MainWindow::over()
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     switch(e->key()) {
-    case Qt::Key_Up:
-    case Qt::Key_W:
-        player->setPos(player->x(), player->y() - 20);
-        break;
-    case Qt::Key_Down:
-    case Qt::Key_S:
-        player->setPos(player->x(), player->y() + 20);
-        break;
     case Qt::Key_Left:
     case Qt::Key_A:
         player->setPos(player->x() - 20, player->y());
