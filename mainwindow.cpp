@@ -6,44 +6,28 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    scene(new QGraphicsScene(0, 0, 600, 830)),
+    scene(new QGraphicsScene(0, 0, 1000, 830)),
     timer(new QTimer)
 {
     ui->setupUi(this);
     ui->graphicsView->setScene(scene);
     player = new QGraphicsPixmapItem(QPixmap(":/res/doodle.png"));
     scene->addItem(player);
-    player->setPos(300 - player->pixmap().width() / 2, 830 - player->pixmap().height());
+    player->setPos(500 - player->pixmap().width() / 2, 830 - player->pixmap().height());
     timer->start(5);
     connect(timer, SIGNAL(timeout()), this, SLOT(jump()));
     srand(time(NULL));
     for(int i = 0; i < 5; i++)
     {
-        QGraphicsPixmapItem *plat = new QGraphicsPixmapItem(QPixmap(":/res/normal_platform.png").scaled(100, 50));
-        plat->setPos(rand() % (600 - plat->pixmap().width()), rand() % (830 / 5) + (830 / 5) * i);
-        plats.insert(plat);
-        scene->addItem(plat);
+        gen_plat(rand() % (1000 - 100), rand() % (830 / 5) + (830 / 5) * i);
         if(rand() % 20 < 3)
-        {
-            plat = new QGraphicsPixmapItem(QPixmap(":/res/normal_platform.png").scaled(100, 50));
-            plat->setPos(rand() % (600 - plat->pixmap().width()), rand() % (830 / 5) + (830 / 5) * i);
-            plats.insert(plat);
-            scene->addItem(plat);
-        }
+            gen_plat(rand() % (1000 - 100), rand() % (830 / 5) + (830 / 5) * i);
     }
     for(int i = 0; i < 10; i++)
     {
-        QGraphicsPixmapItem *plat = new QGraphicsPixmapItem(QPixmap(":/res/normal_platform.png").scaled(100, 50));
-        plat->setPos(rand() % (600 - plat->pixmap().width()), -(rand() % (1660 / 10) + (1660 / 10) * i));
-        plats.insert(plat);
-        scene->addItem(plat);
+        gen_plat(rand() % (1000 - 100), -(rand() % (1660 / 10) + (1660 / 10) * i));
         if(rand() % 20 < 3)
-        {
-            plat = new QGraphicsPixmapItem(QPixmap(":/res/normal_platform.png").scaled(100, 50));
-            plat->setPos(rand() % (600 - plat->pixmap().width()), -(rand() % (1660 / 10) + (1660 / 10) * i));
-            plats.insert(plat);
-            scene->addItem(plat);
-        }
+            gen_plat(rand() % (1000 - 100), -(rand() % (1660 / 10) + (1660 / 10) * i));
     }
 }
 
@@ -66,20 +50,31 @@ void MainWindow::jump()
         if(player->x() + player->pixmap().width() > plat->x() && player->x() < plat->x() + plat->pixmap().width() && abs(plat->y() - player->y() - player->pixmap().height()) <= 3.5 && v < 0)
         {
             v = 6.5;
+            if(plat->be_jumped())
+                plats.erase(plat);
             break;
         }
     if(player->y() + player->pixmap().height() >= 830)
         v = 6.5;
 }
 
-void MainWindow::gen_plat()
+void MainWindow::gen_plat(double x = -1100, double y = -1100)
 {
-    if(plats.size() > 20)
+    if(plats.size() > 25)
         return;
-    QGraphicsPixmapItem *plat = new QGraphicsPixmapItem(QPixmap(":/res/normal_platform.png").scaled(100, 50));
-    plat->setPos(rand() % (600 - plat->pixmap().width()), -(rand() % 200 + 200));
+    platform_base *plat;
+    if(x <= -1000 && y <= -1000)
+        if(rand() % 20 < 1)
+            plat = new fragile_platform(rand() % (1000 - 100), -(rand() % 200 + 200));
+        else
+            plat = new normal_platform(rand() % (1000 - 100), -(rand() % 200 + 200));
+    else
+        if(rand() % 20 < 1)
+            plat = new fragile_platform(x, y);
+        else
+            plat = new normal_platform(x, y);
     plats.insert(plat);
-    scene->addItem(plat);
+    scene->addItem(static_cast<QGraphicsPixmapItem*>(plat));
 }
 
 void MainWindow::roll(double v)
@@ -129,10 +124,10 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         scene->addItem(static_cast<QGraphicsPixmapItem*>(b));
         break;
     }
-    if(player->x() + player->pixmap().width() / 2 > 600)
+    if(player->x() + player->pixmap().width() / 2 > 1000)
         player->setPos(-player->pixmap().width() / 2, player->y());
     else if(player->x() + player->pixmap().width() / 2 < 0)
-        player->setPos(600 - player->pixmap().width() / 2, player->y());
+        player->setPos(1000 - player->pixmap().width() / 2, player->y());
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e)

@@ -1,14 +1,13 @@
 #ifndef PLATFORM_BASE_H
 #define PLATFORM_BASE_H
 
-class platform_base
+#include <QGraphicsPixmapItem>
+
+class platform_base : public QGraphicsPixmapItem
 {
 public:
-    platform_base(int, int);
-    virtual ~platform_base();
-
-private:
-    int x, y;
+    platform_base();
+    virtual bool be_jumped() = 0;
 };
 
 #endif // PLATFORM_BASE_H

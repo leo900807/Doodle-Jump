@@ -8,6 +8,7 @@
 #include <set>
 
 #include "bullet.h"
+#include "platform.h"
 
 #include <QKeyEvent>
 
@@ -34,8 +35,8 @@ private:
     QGraphicsPixmapItem *player;
     QTimer *timer;
     double v = 6.5, a = -0.05;
-    std::multiset<QGraphicsPixmapItem*> plats;
-    void gen_plat();
+    std::multiset<platform_base*> plats;
+    void gen_plat(double, double);
     void roll(double);
     void over();
 };
