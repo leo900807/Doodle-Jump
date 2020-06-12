@@ -1,15 +1,38 @@
 #include "bullet.h"
 
-bullet::bullet()
+bullet::bullet(double init_bomb_x, double init_bomb_y, double init_bomb_w, double init_bomb_h)
 {
-
+    bomb_x = init_bomb_x;
+    bomb_y = init_bomb_y;
+    bomb_w = init_bomb_w;
+    bomb_h = init_bomb_h;
 }
-
+#include <QDebug>
 void bullet::fly()
 {
-    setPos(x(), y() - 8);
+    setPos(x(), y() - 5);
+    if(colliding_with_bomb())
+    {
+        qDebug() << "test";
+        emit explode();
+        this->scene()->removeItem(this);
+        delete this;
+    }
     if(y() + 178 < 0) {
         this->scene()->removeItem(this);
         delete this;
     }
+}
+
+void bullet::set_bomb(double init_bomb_x, double init_bomb_y, double init_bomb_w, double init_bomb_h)
+{
+    bomb_x = init_bomb_x;
+    bomb_y = init_bomb_y;
+    bomb_w = init_bomb_w;
+    bomb_h = init_bomb_h;
+}
+
+bool bullet::colliding_with_bomb()
+{
+    return this->x() + this->pixmap().width() >= bomb_x && this->x() <= bomb_x + bomb_w && this->y() + this->pixmap().height() >= bomb_y && this->y() <= bomb_y + bomb_h;
 }

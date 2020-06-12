@@ -4,5 +4,10 @@
         <file>res/doodle.png</file>
         <file>res/fragile_platform.png</file>
         <file>res/normal_platform.png</file>
+        <file>res/pause_icon.png</file>
+        <file>res/start_icon.png</file>
+        <file>res/fly.jpg</file>
+        <file>res/bomb.png</file>
+        <file>res/hole.png</file>
     </qresource>
 </RCC>
