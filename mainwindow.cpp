@@ -89,6 +89,8 @@ void MainWindow::jump()
 
 void MainWindow::pause()
 {
+    if(overed)
+        return;
     paused ^= 1;
     if(paused)
     {
@@ -174,6 +176,7 @@ void MainWindow::roll(double v)
 
 void MainWindow::over()
 {
+    overed = 1;
     timer->stop();
     for(auto plat : plats)
         plat->hide();
@@ -209,6 +212,10 @@ void MainWindow::rm_bomb()
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
+    if(overed)
+        return;
+    if(e->key() == Qt::Key_P)
+        pause();
     if(paused)
         return;
     switch(e->key()) {

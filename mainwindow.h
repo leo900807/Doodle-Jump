@@ -40,7 +40,7 @@ private:
     QGraphicsPixmapItem *player, *fly, *bomb, *hole;
     QTimer *timer;
     double v = 6.5, a = -0.05, score = 0, tmp_score = 0, lst_fly_gen = 0, lst_bomb_gen = 0, lst_hole_gen = 0;
-    bool paused = 0;
+    bool paused = 0, overed = 0;
     std::multiset<platform_base*> plats;
     QPushButton *pause_button;
     void gen_plat(double, double);
