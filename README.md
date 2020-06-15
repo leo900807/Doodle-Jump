@@ -32,3 +32,5 @@ And each platform implement the function seperately.
 e.g. `fragile_platform` should be deleted after stepped.  
 
 ## Bonus
+
+My "pause button" will change icon when it paused.
