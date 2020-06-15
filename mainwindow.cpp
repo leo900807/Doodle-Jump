@@ -212,6 +212,7 @@ void MainWindow::roll(double v)
 
 void MainWindow::over()
 {
+    emit rm_bullet();
     overed = 1;
     timer->stop();
     for(auto plat : plats)
@@ -275,6 +276,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         b->setPos(player->x() + player->pixmap().width() / 2 - b->pixmap().width() / 2, player->y() - b->pixmap().height());
         b->connect(timer, SIGNAL(timeout()), b, SLOT(fly()));
         b->connect(b, SIGNAL(explode()), this, SLOT(rm_bomb()));
+        b->connect(this, SIGNAL(rm_bullet()), b, SLOT(rm_bullet()));
         scene->addItem(static_cast<QGraphicsPixmapItem*>(b));
         break;
     }

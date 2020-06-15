@@ -7,13 +7,12 @@ bullet::bullet(double init_bomb_x, double init_bomb_y, double init_bomb_w, doubl
     bomb_w = init_bomb_w;
     bomb_h = init_bomb_h;
 }
-#include <QDebug>
+
 void bullet::fly()
 {
     setPos(x(), y() - 5);
     if(colliding_with_bomb())
     {
-        qDebug() << "test";
         emit explode();
         this->scene()->removeItem(this);
         delete this;
@@ -22,6 +21,12 @@ void bullet::fly()
         this->scene()->removeItem(this);
         delete this;
     }
+}
+
+void bullet::rm_bullet()
+{
+    this->scene()->removeItem(this);
+    delete this;
 }
 
 void bullet::set_bomb(double init_bomb_x, double init_bomb_y, double init_bomb_w, double init_bomb_h)

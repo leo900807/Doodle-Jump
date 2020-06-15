@@ -36,6 +36,9 @@ public slots:
     void gen_shield();
     void rm_bomb();
 
+signals:
+    void rm_bullet();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;

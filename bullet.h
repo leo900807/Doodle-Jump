@@ -15,6 +15,7 @@ public:
 
 public slots:
     void fly();
+    void rm_bullet();
 
 signals:
     void explode();
