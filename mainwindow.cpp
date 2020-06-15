@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), this, SLOT(gen_fly()));
     connect(timer, SIGNAL(timeout()), this, SLOT(gen_bomb()));
     connect(timer, SIGNAL(timeout()), this, SLOT(gen_hole()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(gen_shield()));
     srand(time(NULL));
     for(int i = 0; i < 4; i++)
     {
@@ -50,6 +51,13 @@ MainWindow::MainWindow(QWidget *parent) :
     hole = new QGraphicsPixmapItem(QPixmap(":/res/hole.png").scaled(200, 200));
     hole->setPos(-1000, 1300);
     scene->addItem(hole);
+    shield = new QGraphicsPixmapItem(QPixmap(":/res/shield.png").scaled(100, 100));
+    shield->setPos(-1000, 1300);
+    scene->addItem(shield);
+    shield_icon = new QLabel(this);
+    shield_icon->setPixmap(QPixmap(":/res/shield.png").scaled(45, 45));
+    shield_icon->setGeometry(25, 20, 45, 45);
+    shield_icon->hide();
     ui->lose_label->hide();
     ui->score_name->hide();
     ui->score_label->hide();
@@ -69,8 +77,16 @@ void MainWindow::jump()
     else
         player->setPos(player->x(), player->y() - v);
     v += a;
-    if(colliding_with_bomb() || colliding_with_hole())
+    if(colliding_with_hole())
         return over(), void();
+    if(colliding_with_bomb())
+        if(protect)
+        {
+            emit rm_bomb();
+            protect = 0;
+        }
+        else
+            return over(), void();
     if(colliding_with_fly())
         v = 15;
     else
@@ -82,6 +98,16 @@ void MainWindow::jump()
                     plats.erase(plat);
                 break;
             }
+    if(protect)
+        shield_icon->show();
+    else if(colliding_with_shield())
+    {
+        protect = 1;
+        shield_icon->show();
+        shield->setPos(-1000, 1300);
+    }
+    else
+        shield_icon->hide();
     tmp_score += v;
     score = std::max(tmp_score, score);
     ui->score_bar->display(QString::number(int(score / 10)));
@@ -131,6 +157,15 @@ void MainWindow::gen_hole()
     }
 }
 
+void MainWindow::gen_shield()
+{
+    if(score - lst_shield_gen >= 30000 && rand() % 200 < 2 && !protect)
+    {
+        shield->setPos(rand() % (1000 - shield->pixmap().width()), -rand() % 500);
+        lst_shield_gen = score;
+    }
+}
+
 void MainWindow::gen_plat(double x = -1100, double y = -1100)
 {
     if(plats.size() > 40)
@@ -172,6 +207,7 @@ void MainWindow::roll(double v)
     fly->setPos(fly->x(), fly->y() + v);
     bomb->setPos(bomb->x(), bomb->y() + v);
     hole->setPos(hole->x(), hole->y() + v);
+    shield->setPos(shield->x(), shield->y() + v);
 }
 
 void MainWindow::over()
@@ -203,6 +239,11 @@ bool MainWindow::colliding_with_bomb()
 bool MainWindow::colliding_with_hole()
 {
     return player->x() + player->pixmap().width() >= hole->x() && player->x() <= hole->x() + hole->pixmap().width() && player->y() + player->pixmap().height() >= hole->y() && player->y() <= hole->y() + hole->pixmap().height();
+}
+
+bool MainWindow::colliding_with_shield()
+{
+    return player->x() + player->pixmap().width() >= shield->x() && player->x() <= shield->x() + shield->pixmap().width() && player->y() + player->pixmap().height() >= shield->y() && player->y() <= shield->y() + shield->pixmap().height();
 }
 
 void MainWindow::rm_bomb()

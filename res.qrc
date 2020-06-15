@@ -9,5 +9,6 @@
         <file>res/fly.jpg</file>
         <file>res/bomb.png</file>
         <file>res/hole.png</file>
+        <file>res/shield.png</file>
     </qresource>
 </RCC>
